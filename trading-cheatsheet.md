@@ -1,6 +1,6 @@
 # Command Cheatsheet
 
-Generated 2026-08-27 10:20 — do not edit by hand.
+Generated from `cheatsheet.sh` and `trading-functions.sh` — do not edit by hand.
 Edit the source files, then run `cheatsheet-md` (or open a new shell).
 
 ## Contents
@@ -155,7 +155,7 @@ Full safe restart runbook for a binary: check .err, bounce, verify recovery coun
 
 ```sh
 # 1. Verify no unexpected errors
-cat 20260827.err
+cat <DATE>.err
 
 # 1. Stop sending new strategy orders
 trading_controller_cli stop strategy --strategy_family <----> --dry_run
@@ -276,7 +276,7 @@ cd <---->/on
 ls -1 | grep <---->.on.csv
 
 # 2. Take a backup of the original file
-cp -p <---->.on.csv <---->.on.1020.csv
+cp -p <---->.on.csv <---->.on.<DATE>.csv
 
 # 3. Copy the modified on.csv into place as the dated file
 

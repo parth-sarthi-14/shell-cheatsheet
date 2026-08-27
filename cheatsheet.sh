@@ -214,6 +214,7 @@ _clip_wrap_file() {
   done
 }
 
+
 # --- markdown export --------------------------------------------------------
 : ${CHEATSHEET_MD:="$HOME/trading-cheatsheet.md"}
 : ${CHEATSHEET_MD_SKIP:="cheatsheet cheatsheet-md"}
@@ -225,9 +226,13 @@ cheatsheet-md() {
   local out="${1:-$CHEATSHEET_MD}"
   local tmp="${out}.tmp.$$"
 
-  {
+  # Subshell: the frozen `date` below dies with it, keeping output reproducible
+  # so the markdown only changes when a command actually changes.
+  (
+    date() { printf '<DATE>'; }
+
     printf '# Command Cheatsheet\n\n'
-    printf 'Generated %s — do not edit by hand.\n' "$(date '+%Y-%m-%d %H:%M')"
+    printf 'Generated from `cheatsheet.sh` and `trading-functions.sh` — do not edit by hand.\n'
     printf 'Edit the source files, then run `cheatsheet-md` (or open a new shell).\n\n'
 
     _cs_scan | awk -F'\t' '
@@ -269,7 +274,7 @@ cheatsheet-md() {
     done
 
     printf '\n'
-  } > "$tmp" && mv "$tmp" "$out"
+  ) > "$tmp" && mv "$tmp" "$out"
 
   [ -t 1 ] && printf 'wrote %s\n' "$out"
   return 0
