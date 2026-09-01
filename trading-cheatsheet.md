@@ -145,6 +145,16 @@ Print the command to start strategy orders for a family
 trading_controller_cli start strategy --strategy_family <----> --skip_dry_run_check
 ```
 
+### `recovery_count`
+
+Print the command to check recovery counts for a strategy family
+
+**Usage:** `recovery_count <family-name>`
+
+```sh
+trading_controller_cli custom connect-strategy --strategy_family <----> -c "recovery_count_info" --skip_dry_run_check
+```
+
 ## restarts
 
 ### `restart_binaries`
@@ -207,7 +217,7 @@ trading_controller_cli restart binaries --strategy-family <---->
 
 Triage protocol + commands for NoTrade / NoOrder alerts
 
-**Usage:** `No-order <strategy_family>`
+**Usage:** `No_order <strategy_family>`
 
 ```sh
 Initial protocol for NoTrade and NoOrder alerts.
@@ -226,16 +236,58 @@ trading_controller_cli custom connect-strategy --strategy_family <----> -c 'trad
 
 cat *.portfolio.total | awk -F, '
 NR==1 {
-  for (i=1; i<=NF; i++) {
-    if ($i=="time") t=i
-    if ($i=="filled_qty") f=i
-    if ($i=="n_requests_sent_post_bounce") n=i
-  }
+ for (i=1; i<=NF; i++) {
+  if ($i=="time") t=i
+  if ($i=="filled_qty") f=i
+  if ($i=="n_requests_sent_post_bounce") n=i
+  if ($i=="open_buy_qty") ob=i
+  if ($i=="open_long_sell_qty") ols=i
+  if ($i=="open_short_sell_qty") oss=i
+ }
+ print $t","$f","$n",open_total_qty"
+ next
 }
-{ print $t","$f","$n }
+{ print $t","$f","$n","($ob+$ols+$oss) }
 ' | vd -f csv
-	
+
+
+5b. Detect stalled rows (repeated time / filled_qty / n_requests values):
+
+awk -F, '
+function clean(s) { gsub(/^[ \t\r"]+|[ \t\r"]+$/, "", s); return s }
+FNR==1 {
+  t=0; f=0; n=0; have=0; shown=0
+  for (i=1; i<=NF; i++) {
+    h = clean($i)
+    if (h=="time") t=i
+    if (h=="filled_qty") f=i
+    if (h=="n_requests_sent_post_bounce") n=i
+  }
+  if (!t || !f || !n) { print "header not matched in " FILENAME > "/dev/stderr"; exit 1 }
+  if (!hdr++) print "time,filled_qty,n_requests_sent_post_bounce,match"
+  next
+}
+{
+  T = clean($t); F = clean($f)+0; N = clean($n)+0
+  cur = T","F","N
+  m = ""
+  if (have) {
+    if (T==pT) m = m "T"
+    if (F==pF) m = m "F"
+    if (N==pN) m = m "N"
+  }
+  if (m != "") {
+    if (!shown) print prev","m
+    print cur","m
+    shown = 1
+  } else shown = 0
+  prev=cur; pT=T; pF=F; pN=N; have=1
+}
+' *.portfolio.total | vd -f csv
 ```
+
+### `clean`
+
 
 ### `segfault`
 
