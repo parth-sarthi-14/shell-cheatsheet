@@ -155,6 +155,16 @@ Print the command to check recovery counts for a strategy family
 trading_controller_cli custom connect-strategy --strategy_family <----> -c "recovery_count_info" --skip_dry_run_check
 ```
 
+### `exchange_strats`
+
+List the strategies running on an exchange, space-separated on one line
+
+**Usage:** `exchange_strats <nsecm|nsefo|bsefo|bsecm>`
+
+```sh
+usage: exchange_strats <nsecm|nsefo|bsefo|bsecm>
+```
+
 ## restarts
 
 ### `restart_binaries`

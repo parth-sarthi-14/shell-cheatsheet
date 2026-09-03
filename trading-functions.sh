@@ -96,6 +96,20 @@ recovery_count() {
   echo "trading_controller_cli custom connect-strategy --strategy_family ${1:-<---->} -c \"recovery_count_info\" --skip_dry_run_check"
 }
 
+# @group trading
+# @desc  List the strategies running on an exchange, space-separated on one line
+# @usage exchange_strats <nsecm|nsefo|bsefo|bsecm>
+exchange_strats() {
+  local strats
+  case "${1:l}" in
+    nsecm) strats="moltres moltres_committer scholes scholes_committer senna senna_committer thales thales_committer thor thor_committer tolkien tolkien_committer turing turing_committer turing2 thales2 moltres2 tolkien2 thor2" ;;
+    nsefo) strats="alfred2CE alfred2CO alfred2PE alfred2PO alfredM2CE alfredM2CO alfredM2PE alfredM2PO ampere2CE ampere2CO ampere2PE ampere2PO ampereC ampereP aries3CE aries3CO aries3Committer aries3F aries3PE aries3PO aristotle2CE aristotle2CO aristotle2FEP aristotle2PE aristotle2PO aristotleCE aristotleCO aristotleCommitter aristotleFEP aristotlePE aristotlePO arthur2CE arthur2CO arthur2PE arthur2PO arthurC arthurP ashborn2CE ashborn2CO ashborn2PE ashborn2PO ashbornC ashbornP atreus2FC atreus2FP atreus2PCE atreus2PCO atreus2PPE atreus2PPO atreusSO atreusSO_1 atreusSO2 atreusSO2_1 atreusSO3 atreusSO3_1 black2C3 black2CE black2CFEP black2CO black2P3 black2PE black2PFEP black2PO black3Ccommitter black3CE black3CO black3Pcommitter black3PE black3PO blackC blackCommitter blackCommitter2 blackP cauchy cauchy_1 cauchy2 cauchy2_1 cauchy3 cauchy3_1 cauchy4 cauchy4_1 cauchy5 cauchy5_1 cauchy6 cauchy6_1 crofty crofty_1 crofty_2 crofty2 crofty2_1 crofty2_2 crofty3 crofty3_1 crofty3_2 crofty4 crofty4_1 crofty4_2 crofty5 crofty5_1 crofty5_2 crofty6 crofty6_1 crofty6_2 daytona daytona_1 daytona2 daytona2_1 daytona3 daytona3_1 hardyC hardycommitter hardyP helenNC helenNP nemoBNC nemoBNP nemoLNCE nemoLNCO nemoLNPE nemoLNPO nemoN2CE nemoN2CO nemoN2PE nemoN2PO nemoNCE nemoNCO nemoNPE nemoNPO nookNCE nookNCO nookNPE nookNPO radianB1 ramanujamCcommitter ramanujamCE ramanujamCO ramanujamPcommitter ramanujamPE ramanujamPO taurusCE taurusCO taurusCommitter taurusF taurusPE taurusPO troyNC troyNP" ;;
+    bsefo) strats="alfredSC alfredSP ariesBC ariesBCO ariesBCommitter ariesBP ariesBPO arthurBC arthurBP atreusSPC atreusSPP daltonC daltonP dijkstraC dijkstraP dopplerCE dopplerCO dopplerCommitter dopplerPE dopplerPO drakeC drakeP fisherC fisherCommitter fisherP lockeSCcommitter lockeSCE lockeSCO maxwellCcommitter maxwellCE maxwellCO maxwellPcommitter maxwellPE maxwellPO milesCcommitter milesCE milesPcommitter milesPE nemoSCcommitter nemoSCE nemoSCO nemoSPcommitter nemoSPE nemoSPO nookSCcommitter nookSCE nookSCO nookSPcommitter nookSPE nookSPO nookTSC nookTSP taurusCE taurusCO taurusCommitter taurusF taurusPE taurusPO troySP troySC" ;;
+    bsecm) strats="loki_committer odin odin_committer" ;;
+    *) printf 'usage: exchange_strats <nsecm|nsefo|bsefo|bsecm>\n'; return 0 ;;
+  esac
+  printf '%s\n' "$strats"
+}
 # @group restarts
 
 # @desc  Full safe restart runbook for a binary: check .err, bounce, verify recovery counts, start trade
